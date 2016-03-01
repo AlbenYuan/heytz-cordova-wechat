@@ -136,62 +136,39 @@ public class Wechat extends CordovaPlugin {
         }
 
         // run in background
-        cordova.getThreadPool().execute(new Runnable() {
+               cordova.getThreadPool().execute(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    String imageurl = "";
-                    if (params.has("message")&&params.getJSONObject("message").has("media")&&params.getJSONObject("message").getJSONObject("media").has("image")) {
-                        imageurl = params.getJSONObject("message").getJSONObject("media").getString("image");
-                    }
-                    if (imageurl.contains(".png")) {
-//                        Bitmap bmp = BitmapFactory.decodeFile(imageurl);
-//                        WXWebpageObject obj = new WXWebpageObject();
-//                        //分享后点击链接需要跳转的url
-//                        obj.webpageUrl = "http://www.bllc.com";
-                        WXMediaMessage msg = new WXMediaMessage();
-//                        msg.description="";
-//                        msg.title="这里填写标题";
-////                        msg.setThumbImage(bmp) ;
-//                        if (null != bmp) {
-//                            //生成一张缩略图，注意：此处的bitmap千万不能太大，不要超过40k,否则sendReq()时，会有可能返回false。不知道开发shareSDK的人是怎么想的，在文档里写一下会掉一块肉么！
-//                            Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, 80, 80, true);
-//                            bmp.recycle();
-//                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                            thumbBmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
-//                            msg.thumbData = baos.toByteArray();
-//                        }
+                   @Override
+                   public void run() {
+                       try {
+                           String imageurl = "";
+                           if (params.has("message")&&params.getJSONObject("message").has("media")&&params.getJSONObject("message").getJSONObject("media").has("image")) {
+                               imageurl = params.getJSONObject("message").getJSONObject("media").getString("image");
+                           }
+                           if (imageurl.contains(".png")) {
+                               WXMediaMessage msg = new WXMediaMessage();
+                               WXImageObject imgObj = new WXImageObject();
+                               imgObj.setImagePath(imageurl);
+                               msg.mediaObject = imgObj;
+                               Bitmap bmp = BitmapFactory.decodeFile(imageurl);
+                               Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
+                               bmp.recycle();
+                               msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+                               req.transaction = buildTransaction("img");
+                                       req.scene=SendMessageToWX.Req.WXSceneTimeline;
+                               req.message = msg;
+                           } else {
+                               req.message = buildSharingMessage(params);
+                           }
+                       } catch (JSONException e) {
+                           Log.e(TAG, "Failed to build message." + e);
+                       }
 
-//                        WXMediaMessage msg = new WXMediaMessage();
-//                        msg.mediaObject = obj;
-//                        msg.description = "一些分享的描述";
-//                        msg.title = "分享的标题";
+                       api.sendReq(req);
+                       Log.d(TAG, "Message sent.");
+                   }
+               });
 
-//                        Bitmap bmp = BitmapFactory.decodeFile("图片的绝对路径");
-                        WXImageObject imgObj = new WXImageObject();
-                        imgObj.setImagePath(imageurl);
-                        msg.mediaObject = imgObj;
-                        Bitmap bmp = BitmapFactory.decodeFile(imageurl);
-                        Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
-                        bmp.recycle();
-                        msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
-//                        SendMessageToWX.Req req = new SendMessageToWX.Req()
-// ;
-                        req.transaction = buildTransaction("img");
-                                req.scene=SendMessageToWX.Req.WXSceneTimeline;
-                        req.message = msg;
-                    } else {
-                        req.message = buildSharingMessage(params);
-                    }
-                } catch (JSONException e) {
-                    Log.e(TAG, "Failed to build message." + e);
-                }
-
-                api.sendReq(req);
-                Log.d(TAG, "Message sent.");
-            }
-        });
 
         // save the current callback context
         currentCallbackContext = callbackContext;
