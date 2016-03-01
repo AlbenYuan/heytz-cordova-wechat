@@ -1,12 +1,17 @@
-package com.heytz.wechat;
+package xu.li.cordova.wechat;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
 import junit.framework.Assert;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,38 +27,38 @@ public class Util {
 		if (needRecycle) {
 			bmp.recycle();
 		}
-
+		
 		byte[] result = output.toByteArray();
 		try {
 			output.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		return result;
 	}
-
+	
 	public static byte[] getHtmlByteArray(final String url) {
-		URL htmlUrl = null;
-		InputStream inStream = null;
-		try {
-			htmlUrl = new URL(url);
-			URLConnection connection = htmlUrl.openConnection();
-			HttpURLConnection httpConnection = (HttpURLConnection)connection;
-			int responseCode = httpConnection.getResponseCode();
-			if(responseCode == HttpURLConnection.HTTP_OK){
-				inStream = httpConnection.getInputStream();
-			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		 URL htmlUrl = null;     
+		 InputStream inStream = null;     
+		 try {         
+			 htmlUrl = new URL(url);         
+			 URLConnection connection = htmlUrl.openConnection();         
+			 HttpURLConnection httpConnection = (HttpURLConnection)connection;         
+			 int responseCode = httpConnection.getResponseCode();         
+			 if(responseCode == HttpURLConnection.HTTP_OK){             
+				 inStream = httpConnection.getInputStream();         
+			  }     
+			 } catch (MalformedURLException e) {               
+				 e.printStackTrace();     
+			 } catch (IOException e) {              
+				e.printStackTrace();    
+		  } 
 		byte[] data = inputStreamToByte(inStream);
 
 		return data;
 	}
-
+	
 	public static byte[] inputStreamToByte(InputStream is) {
 		try{
 			ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
@@ -67,10 +72,10 @@ public class Util {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-
+		
 		return null;
 	}
-
+	
 	public static byte[] readFromFile(String fileName, int offset, int len) {
 		if (fileName == null) {
 			return null;
@@ -115,7 +120,7 @@ public class Util {
 		}
 		return b;
 	}
-
+	
 	private static final int MAX_DECODE_PICTURE_SIZE = 1920 * 1440;
 	public static Bitmap extractThumbNail(final String path, final int height, final int width, final boolean crop) {
 		Assert.assertTrue(path != null && !path.equals("") && height > 0 && width > 0);

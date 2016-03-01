@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import com.heytz.wechat.Wechat;
+
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import xu.li.cordova.wechat.Wechat;
 
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 

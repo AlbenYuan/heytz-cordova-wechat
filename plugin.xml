@@ -85,24 +85,16 @@
 
     <!-- android -->
     <platform name="android">
-        <hook type="after_plugin_add" src="scripts/android-install.js"/>
-        <hook type="after_plugin_install" src="scripts/android-install.js"/>
-        <hook type="before_plugin_rm" src="scripts/android-install.js"/>
-        <hook type="before_plugin_uninstall" src="scripts/android-install.js"/>
+        <hook type="after_plugin_add" src="scripts/android-install.js" />
+        <hook type="after_plugin_install" src="scripts/android-install.js" />
+        <hook type="before_plugin_rm" src="scripts/android-install.js" />
+        <hook type="before_plugin_uninstall" src="scripts/android-install.js" />
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Wechat">
-                <param name="android-package" value="com.heytz.wechat"/>
+                <param name="android-package" value="xu.li.cordova.wechat.Wechat"/>
             </feature>
-            <preference name="WechatAppId" value="$WECHAT_APPID"/>
-        </config-file>
-
-        <config-file target="AndroidManifest.xml" parent="/*">
-            <uses-permission android:name="android.permission.INTERNET"/>
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-            <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+            <preference name="WechatAppId" value="$WechatAppId"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -113,14 +105,13 @@
                 <intent-filter>
                     <action android:name="android.intent.action.VIEW"/>
                     <category android:name="android.intent.category.DEFAULT"/>
-                    <data android:scheme="$WECHAT_APPID"/>
+                    <data android:scheme="$WechatAppId"/>
                 </intent-filter>
             </activity>
         </config-file>
 
-        <source-file src="src/android/Wechat.java" target-dir="src/com/heytz/wechat"/>
-        <source-file src="src/android/Util.java" target-dir="src/com/heytz/wechat"/>
-        <!--<source-file src="src/android/WXEntryActivity.java" target-dir="src/com/heytz/wechat"/>-->
-        <source-file src="src/android/libammsdk.jar" target-dir="libs"/>
+        <source-file src="src/android/Wechat.java" target-dir="src/xu/li/cordova/wechat" />
+        <source-file src="src/android/Util.java" target-dir="src/xu/li/cordova/wechat" />
+        <source-file src="src/android/libammsdk.jar" target-dir="libs" />
     </platform>
 </plugin>

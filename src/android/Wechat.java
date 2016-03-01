@@ -1,13 +1,20 @@
-package com.heytz.wechat;
+package xu.li.cordova.wechat;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
-import com.tencent.mm.sdk.modelmsg.*;
+
+import com.tencent.mm.sdk.modelmsg.SendAuth;
+import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.sdk.modelmsg.WXImageObject;
+import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.sdk.modelmsg.WXTextObject;
+import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
