@@ -1,4 +1,4 @@
-package xu.li.cordova.wechat;
+package com.heytz.wechat;
 
 import android.app.Activity;
 import android.content.Intent;
