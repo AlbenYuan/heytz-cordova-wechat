@@ -1,9 +1,10 @@
-package com.heytz.wechat;
+package __PACKAGE_NAME__;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import com.heytz.wechat.Wechat;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
