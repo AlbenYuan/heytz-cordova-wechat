@@ -127,3 +127,6 @@ See [FAQ](https://github.com/xu-li/cordova-plugin-wechat/wiki/FAQ).
 # LICENSE
 
 [MIT LICENSE](http://opensource.org/licenses/MIT)
+
+v0.9.5
+android 添加image 为 .png 后缀的都识别为图片分享.
