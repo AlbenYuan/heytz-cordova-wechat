@@ -115,59 +115,72 @@ public class Wechat extends CordovaPlugin {
         }
 
         final JSONObject params = args.getJSONObject(0);
-        final SendMessageToWX.Req req = new SendMessageToWX.Req();
-        req.transaction = buildTransaction();
-
-        if (params.has(KEY_ARG_SCENE)) {
-            int scene = params.getInt(KEY_ARG_SCENE);
-            switch (scene) {
-                case SCENE_FAVORITE:
-                    req.scene = SendMessageToWX.Req.WXSceneFavorite;
-                    break;
-                case SCENE_TIMELINE:
-                    req.scene = SendMessageToWX.Req.WXSceneTimeline;
-                    break;
-                case SCENE_SESSION:
-                    req.scene = SendMessageToWX.Req.WXSceneSession;
-                    break;
-            }
-        } else {
-            req.scene = SendMessageToWX.Req.WXSceneTimeline;
-        }
 
         // run in background
-               cordova.getThreadPool().execute(new Runnable() {
+        cordova.getThreadPool().execute(new Runnable() {
 
-                   @Override
-                   public void run() {
-                       try {
-                           String imageurl = "";
-                           if (params.has("message")&&params.getJSONObject("message").has("media")&&params.getJSONObject("message").getJSONObject("media").has("image")) {
-                               imageurl = params.getJSONObject("message").getJSONObject("media").getString("image");
-                           }
-                           if (imageurl.contains(".png")) {
-                               WXMediaMessage msg = new WXMediaMessage();
-                               WXImageObject imgObj = new WXImageObject();
-                               imgObj.setImagePath(imageurl);
-                               msg.mediaObject = imgObj;
-                               Bitmap bmp = BitmapFactory.decodeFile(imageurl);
-                               Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
-                               bmp.recycle();
-                               msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
-                               req.transaction = buildTransaction("img");
-                                       req.scene=SendMessageToWX.Req.WXSceneTimeline;
-                               req.message = msg;
-                           } else {
-                               req.message = buildSharingMessage(params);
-                           }
-                       } catch (JSONException e) {
-                           Log.e(TAG, "Failed to build message." + e);
-                       }
+            @Override
+            public void run() {
+                SendMessageToWX.Req req = null;
+                try {
 
-                       api.sendReq(req);
-                       Log.d(TAG, "Message sent.");
-                   }
-               });
+                    String imageurl = "", transaction;
+                    if (params.has("message") &&
+                            params.getJSONObject("message").has("media") &&
+                            params.getJSONObject("message").getJSONObject("media").has("image")) {
+                        imageurl = params.getJSONObject("message").getJSONObject("media").getString("image");
+                    }
+                    WXMediaMessage message;
+                    if (imageurl.contains(".png")) {
+
+                        Bitmap bmp = BitmapFactory.decodeFile(imageurl);
+
+                        // 创建对象
+                        WXMediaMessage msg = new WXMediaMessage();
+                        WXImageObject imgObj = new WXImageObject(bmp);
+
+                        msg.mediaObject = imgObj;
+
+                        // 设置缩略图
+                        Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
+
+                        bmp.recycle();
+                        msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+                        transaction = buildTransaction("img");
+                        message = msg;
+                    } else {
+                        message = buildSharingMessage(params);
+                        transaction = buildTransaction();
+                    }
+
+                    int scene = SendMessageToWX.Req.WXSceneTimeline;
+                    if (params.has(KEY_ARG_SCENE)) {
+                        int agrScene = params.getInt(KEY_ARG_SCENE);
+                        switch (agrScene) {
+                            case SCENE_FAVORITE:
+                                scene = SendMessageToWX.Req.WXSceneFavorite;
+                                break;
+                            case SCENE_TIMELINE:
+                                scene = SendMessageToWX.Req.WXSceneTimeline;
+                                break;
+                            case SCENE_SESSION:
+                                scene = SendMessageToWX.Req.WXSceneSession;
+                                break;
+                        }
+                    }
+                    req = new SendMessageToWX.Req();
+                    req.message = message;
+                    req.scene = scene;
+                    req.transaction = transaction;
+                    api.sendReq(req);
+                    Log.d(TAG, "Message sent.");
+                } catch (JSONException e) {
+                    Log.e(TAG, "Failed to build message." + e);
+                }
+
+
+            }
+        });
 
 
         // save the current callback context
@@ -253,7 +266,8 @@ public class Wechat extends CordovaPlugin {
 
                 case TYPE_WX_SHARING_IMAGE:
                     mediaObject = new WXImageObject();
-                    String image = getImageURL(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA), KEY_ARG_MESSAGE_MEDIA_IMAGE);
+                    String image = getImageURL(message.getJSONObject(KEY_ARG_MESSAGE_MEDIA),
+                            KEY_ARG_MESSAGE_MEDIA_IMAGE);
                     ((WXImageObject) mediaObject).setImagePath(image);
                 case TYPE_WX_SHARING_MUSIC:
                     break;
