@@ -7,8 +7,10 @@ import android.util.Log;
 
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,7 +89,8 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     }
 
     @Override
-    public void onReq(com.tencent.mm.sdk.modelbase.BaseReq req) {
+    public void onReq(BaseReq req) {
         finish();
     }
 }
+
