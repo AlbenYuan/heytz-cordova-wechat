@@ -70,9 +70,9 @@
         <source-file src="src/ios/CDVWechat.m"/>
 
         <!-- Wechat Official -->
-        <header-file src="src/ios/libs/WeChatSDK_1.6.1/WXApi.h"/>
-        <header-file src="src/ios/libs/WeChatSDK_1.6.1/WXApiObject.h"/>
-        <source-file src="src/ios/libs/WeChatSDK_1.6.1/libWeChatSDK.a" framework="true"/>
+        <header-file src="src/ios/libs/OpenSDK1.7.7/WXApi.h"/>
+        <header-file src="src/ios/libs/OpenSDK1.7.7/WXApiObject.h"/>
+        <source-file src="src/ios/libs/OpenSDK1.7.7/libWeChatSDK.a" framework="true"/>
 
         <!-- Other required frameworks -->
         <framework src="libz.dylib"/>
