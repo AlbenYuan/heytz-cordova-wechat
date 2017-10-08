@@ -98,7 +98,7 @@ public class Wechat extends CordovaPlugin {
         return super.execute(action, args, callbackContext);
     }
 
-    protected boolean share(JSONArray args, CallbackContext callbackContext)
+    protected boolean share(JSONArray args, final CallbackContext callbackContext)
             throws JSONException {
         final IWXAPI api = getWXAPI(true);
 
@@ -121,36 +121,37 @@ public class Wechat extends CordovaPlugin {
 
             @Override
             public void run() {
-                SendMessageToWX.Req req = null;
+                SendMessageToWX.Req req = new SendMessageToWX.Req();
                 try {
-
-                    String imageurl = "", transaction;
+                    String path = "", transaction;
                     if (params.has("message") &&
                             params.getJSONObject("message").has("media") &&
                             params.getJSONObject("message").getJSONObject("media").has("image")) {
-                        imageurl = params.getJSONObject("message").getJSONObject("media").getString("image");
+                        path = params.getJSONObject("message").getJSONObject("media").getString("image");
                     }
                     WXMediaMessage message;
-                    if (imageurl.contains(".png")) {
+                    if (path.contains(".png")) {
 
-                        Bitmap bmp = BitmapFactory.decodeFile(imageurl);
+                        File file = new File(path);
+                        if (!file.exists()) {
+                            callbackContext.error(ERROR_INVALID_PARAMETERS);
+                        }
 
-                        // 创建对象
+                        WXImageObject imgObj = new WXImageObject();
+                        imgObj.setImagePath(path);
+
                         WXMediaMessage msg = new WXMediaMessage();
-                        WXImageObject imgObj = new WXImageObject(bmp);
-
                         msg.mediaObject = imgObj;
 
-                        // 设置缩略图
+                        Bitmap bmp = BitmapFactory.decodeFile(path);
                         Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
-
                         bmp.recycle();
                         msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
-                        transaction = buildTransaction("img");
-                        message = msg;
+                        req.transaction = buildTransaction("img");
+                        req.message = msg;
                     } else {
-                        message = buildSharingMessage(params);
-                        transaction = buildTransaction();
+                        req.message = buildSharingMessage(params);
+                        req.transaction = buildTransaction();
                     }
 
                     int scene = SendMessageToWX.Req.WXSceneTimeline;
@@ -168,10 +169,7 @@ public class Wechat extends CordovaPlugin {
                                 break;
                         }
                     }
-                    req = new SendMessageToWX.Req();
-                    req.message = message;
                     req.scene = scene;
-                    req.transaction = transaction;
                     api.sendReq(req);
                     Log.d(TAG, "Message sent.");
                 } catch (JSONException e) {
